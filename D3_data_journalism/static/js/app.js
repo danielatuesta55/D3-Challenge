@@ -110,7 +110,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     var label;
 
     if (chosenXAxis === "poverty") {
-        label = "In Poverty:";
+        label = "In Poverty(%):";
     } else if (chosenXAxis === "age") {
         label = "Age (Median):";
     } else {
@@ -119,9 +119,9 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
-        .offset([80, -60])
+        .offset([80, 60])
         .html(function(d) {
-            return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
+            return (`${d.abbr}<br>${label} ${d[chosenXAxis]}`);
         });
 
     //Note:  Below circlesGroup is having the tooltip added but other elements could also have the tool tip added
@@ -150,7 +150,7 @@ var svgHeight = 500;
 var margin = {
     top: 20,
     right: 40,
-    bottom: 80,
+    bottom: 100,
     left: 100
 };
 
@@ -188,12 +188,12 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     // parse data - set values to numerical data types
     healthData.forEach(function(data) {
         data.poverty = +data.poverty;
-        data.age = +data.age;
         data.income = +data.income;
-        data.healthcare = +data.healthcare;
-        data.obesity = +data.obesity;
-        data.smokes = +data.smokes;
+        data.age = +data.age;
         data.abbr = data.abbr;
+        data.obesity = +data.obesity;
+        data.healthcare = +data.healthcare;
+        data.smokes = +data.smokes;
     });
 
     // Data Exploration (Section 1)
@@ -206,7 +206,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
 
     // Create y scale function
     var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(healthData, d => d.healthcare)])
+        .domain([0, d3.max(healthData, d => d.obesity)])
         .range([height, 0]);
 
     // Create initial axis functions; generates the scaled axis
@@ -235,19 +235,20 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     var circlesGroup = circlesGroupAll
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
-        .attr("cy", d => yLinearScale(d.healthData))
+        .attr("cy", d => yLinearScale(d.obesity))
         .attr("r", 20)
-        .attr("fill", "blue")
-        .attr("opacity", ".5");
+        .attr("fill", "lightblue")
+        .attr("opacity", "1");
 
     // added by Erin - I wanted to add text to the circles - probably several ways of doing this but here is one.
     // data is bound to ciclesGroupAll like above and now I add a text element at "x" and "y", not the difference from above.
     // added round function to make the numbers in the cirlces have no decimals; this is a random data selection; I just wanted something inside the circles. If you want to see why these values are like they are then you need to back-calculate what xScale and transpose is doing
     var textcirclesGroup = circlesGroupAll
         .append("text")
-        .text((d) => Math.round(xLinearScale(d[chosenXAxis])))
-        .attr("x", d => xLinearScale(d[chosenXAxis]))
-        .attr("y", d => yLinearScale(d.healthcare))
+        .text((d) => d.abbr)
+        .attr("fill", "white")
+        .attr("x", d => xLinearScale(d[chosenXAxis]) - xLinearScale(7.6)) // **JD - MODIFY FOR VERTICLE AXES**
+        .attr("y", d => yLinearScale(d.obesity) + 3)
 
     // Create group for two x-axis labels
     var labelsGroup = chartGroup.append("g")
