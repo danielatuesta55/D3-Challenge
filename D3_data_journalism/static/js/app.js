@@ -182,7 +182,7 @@ let chosenXAxis = "poverty";
 
 
 // Retrieve data from the CSV file and execute everything below
-d3.csv("data.csv").then(function(healthData, err) {
+d3.csv("static/data/data.csv").then(function(healthData, err) {
     if (err) throw err;
 
     // parse data - set values to numerical data types
@@ -267,6 +267,14 @@ d3.csv("data.csv").then(function(healthData, err) {
         .classed("inactive", true)
         .text("Age (Median)");
 
+    let HouseholdIncomeLabel = labelsGroup.append("text")
+        .attr("x", 0)
+        .attr("y", 40)
+        .attr("value", "income") // value to grab for event listener
+        .classed("inactive", true)
+        .text("Household Income (Median)");
+
+
     // append y axis
     scatterGroup.append("text")
         .attr("transform", "rotate(-90)")
@@ -315,20 +323,36 @@ d3.csv("data.csv").then(function(healthData, err) {
                 circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
                 // changes classes to change bold text
-                if (chosenXAxis === "age") {
+                if (chosenXAxis === "poverty") {
+                    povertyLengthLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                    AgeLengthLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                    householdIncomeLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                } else if (chosenXAxis === "age") {
                     AgeLengthLabel
                         .classed("active", true)
                         .classed("inactive", false);
-                    povertyLength
+                    povertyLengthLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                    householdIncomeLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 } else {
+                    HouseholdIncomeLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
                     AgeLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
                     povertyLengthLabel
-                        .classed("active", true)
-                        .classed("inactive", false);
+                        .classed("active", false)
+                        .classed("inactive", true);
                 }
             }
         });
