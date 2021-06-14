@@ -10,16 +10,16 @@
 // 1.  Data Exploration (always do this; understand its structure)
 // 2.  Define Functions (a and e used in page load, a through e used in click event)
 //      a.  xScale(healthData, chosenXAxis):  Scales data to svg width (let width defined in Section 3: Setup SVG )
-//              inputs:  (data like "healthData", an axis name like "hair_length")
+//              inputs:  (data like "healthData", an axis name like "poverty")
 //              returns:  scaled data function
 //      b.  renderAxes(newXScale, xAxis): Uses the xScale function and sets new x-axis values
 //              inputs:  (function like "xLinearScale", object like xAxis)
 //              outputs:  returns new xAxis values
 //      c.  renderCircles(circlesGroup, newXScale, chosenXAxis):  Takes grouped elements like "circlesGroup" and scales data of a given axis and assigns it to the elements attribute "cx"
-//              inputs:  (grouped elements like "circlesGroup", a function like "xLinearScale", a specified axis name like "chosenXAxis" (ie "hair_length"))
+//              inputs:  (grouped elements like "circlesGroup", a function like "xLinearScale", a specified axis name like "chosenXAxis" (ie "poverty"))
 //              outputs:  returns updated circlesGroup elements with new x values
 //      d.  **new** rendertextCircles(textcirclesGroup, newXScale, chosenXAxis)
-//              inputs: (element like "textcirclesGroup", function like "xLinearScale", a specified axis name like "chosenXAxis" (ie "hair_length"))
+//              inputs: (element like "textcirclesGroup", function like "xLinearScale", a specified axis name like "chosenXAxis" (ie "poverty"))
 //              outputs:  returns an updated textcirclesGroup group element with new labels
 //      e.  updateToolTip:  updates circlesGroup with textbox messages
 //              inputs:  (a specified axis name like "chosenXAxis", elements like "circlesGroup")
@@ -45,7 +45,7 @@
 
 // #######################  1.  Data Exploration  ################ //
 // CSV file shows that
-//  Data has following columns:  rockband, hair_length, healthcare, num_albums
+//  Data has following columns:  rockband, poverty, healthcare, age
 //  Once read by d3.csv then it is like an array of 20 objects as key-value pair format so I will need to use foreach or arrow functions to get arrays
 //  console.log(healthData) see below after d3.csv
 
@@ -193,6 +193,7 @@ d3.csv("data.csv").then(function(healthData, err) {
         data.healthcare = +data.healthcare;
         data.obesity = +data.obesity;
         data.smokes = +data.smokes;
+        data.abbr = data.abbr;
     });
 
     // Data Exploration (Section 1)
@@ -236,7 +237,7 @@ d3.csv("data.csv").then(function(healthData, err) {
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d.healthcare))
         .attr("r", 20)
-        .attr("fill", "pink")
+        .attr("fill", "blue")
         .attr("opacity", ".5");
 
     // added by Erin - I wanted to add text to the circles - probably several ways of doing this but here is one.
@@ -252,19 +253,19 @@ d3.csv("data.csv").then(function(healthData, err) {
     let labelsGroup = scatterGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-    let hairLengthLabel = labelsGroup.append("text")
+    let povertyLength = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 20)
-        .attr("value", "hair_length") // value to grab for event listener
+        .attr("value", "poverty") // value to grab for event listener
         .classed("active", true)
-        .text("Hair Metal Ban Hair Length (inches)");
+        .text("In poverty");
 
-    let albumsLabel = labelsGroup.append("text")
+    let AgeLengthLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 40)
-        .attr("value", "num_albums") // value to grab for event listener
+        .attr("value", "age") // value to grab for event listener
         .classed("inactive", true)
-        .text("# of Albums Released");
+        .text("Age (Median)");
 
     // append y axis
     scatterGroup.append("text")
@@ -314,18 +315,18 @@ d3.csv("data.csv").then(function(healthData, err) {
                 circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
                 // changes classes to change bold text
-                if (chosenXAxis === "num_albums") {
-                    albumsLabel
+                if (chosenXAxis === "age") {
+                    AgeLengthLabel
                         .classed("active", true)
                         .classed("inactive", false);
-                    hairLengthLabel
+                    povertyLength
                         .classed("active", false)
                         .classed("inactive", true);
                 } else {
-                    albumsLabel
+                    AgeLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    hairLengthLabel
+                    povertyLengthLabel
                         .classed("active", true)
                         .classed("inactive", false);
                 }
