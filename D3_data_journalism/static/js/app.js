@@ -122,6 +122,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     var toolTip = d3.tip()
         .attr("class", "tooltip")
         .style("background", "black")
+        .style("text-align", "center")
         .style("color", "white")
         .offset([120, -60])
         .html(function(d) {
