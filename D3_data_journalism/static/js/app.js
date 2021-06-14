@@ -9,7 +9,7 @@
 // Layout of this document
 // 1.  Data Exploration (always do this; understand its structure)
 // 2.  Define Functions (a and e used in page load, a through e used in click event)
-//      a.  xScale(healthData, chosenXAxis):  Scales data to svg width (let width defined in Section 3: Setup SVG )
+//      a.  xScale(healthData, chosenXAxis):  Scales data to svg width (var width defined in Section 3: Setup SVG )
 //              inputs:  (data like "healthData", an axis name like "poverty")
 //              returns:  scaled data function
 //      b.  renderAxes(newXScale, xAxis): Uses the xScale function and sets new x-axis values
@@ -45,7 +45,7 @@
 
 // #######################  1.  Data Exploration  ################ //
 // CSV file shows that
-//  Data has following columns:  rockband, poverty, healthcare, age
+//  Data has following columns:  state, poverty, healthcare, age
 //  Once read by d3.csv then it is like an array of 20 objects as key-value pair format so I will need to use foreach or arrow functions to get arrays
 //  console.log(healthData) see below after d3.csv
 
@@ -55,11 +55,11 @@
 
 
 // #################### 2.  Define Function ###############//
-// function used for updating x-scale let upon click on axis label
+// function used for updating x-scale var upon click on axis label
 // scaling function: https://www.d3indepth.com/scales/
 function xScale(healthData, chosenXAxis) {
     // create scales
-    let xLinearScale = d3.scaleLinear()
+    var xLinearScale = d3.scaleLinear()
         .domain([d3.min(healthData, d => d[chosenXAxis]) * 0.8,
             d3.max(healthData, d => d[chosenXAxis]) * 1.2
         ])
@@ -69,9 +69,9 @@ function xScale(healthData, chosenXAxis) {
 
 }
 
-// function used for updating xAxis let upon click on axis label
+// function used for updating xAxis var upon click on axis label
 function renderAxes(newXScale, xAxis) {
-    let bottomAxis = d3.axisBottom(newXScale);
+    var bottomAxis = d3.axisBottom(newXScale);
 
     xAxis.transition()
         .duration(1000)
@@ -107,7 +107,7 @@ function rendertextCircles(textcirclesGroup, newXScale, chosenXAxis) {
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
 
-    let label;
+    var label;
 
     if (chosenXAxis === "poverty") {
         label = "In Poverty:";
@@ -117,11 +117,11 @@ function updateToolTip(chosenXAxis, circlesGroup) {
         label = "Household Income (Median)";
     }
 
-    let toolTip = d3.tip()
+    var toolTip = d3.tip()
         .attr("class", "tooltip")
         .offset([80, -60])
         .html(function(d) {
-            return (`${d.rockband}<br>${label} ${d[chosenXAxis]}`);
+            return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
         });
 
     //Note:  Below circlesGroup is having the tooltip added but other elements could also have the tool tip added
@@ -144,10 +144,10 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
 //########################  3.  SVG Setup ###################################//
 
-let svgWidth = 960;
-let svgHeight = 500;
+var svgWidth = 960;
+var svgHeight = 500;
 
-let margin = {
+var margin = {
     top: 20,
     right: 40,
     bottom: 80,
@@ -155,19 +155,19 @@ let margin = {
 };
 
 // xScale uses width so xScale() can only be called below this point
-let width = svgWidth - margin.left - margin.right;
-let height = svgHeight - margin.top - margin.bottom;
+var width = svgWidth - margin.left - margin.right;
+var height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper, append an SVG group that will hold our scatter,
 // and shift the latter by left and top margins.
-let svg = d3
-    .select(".scatter")
+var svg = d3
+    .select("#scatter")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
 
 // Append an SVG group
-let scatterGroup = svg.append("g")
+var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 
@@ -178,7 +178,7 @@ let scatterGroup = svg.append("g")
 // #################### 4.  BRING in Data and ADD Structure ###############//
 
 // Initial Params - includes any axis selection that has multiple options
-let chosenXAxis = "poverty";
+var chosenXAxis = "poverty";
 
 
 // Retrieve data from the CSV file and execute everything below
@@ -202,40 +202,40 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     // xLinearScale function above csv import; Note:  xLinearScale is functioncontains scaled data specific to the defined axis
     // Important note:  xScale uses width that is defined above; xScale can only be called below width in the code
     // scaling function: https://www.d3indepth.com/scales/
-    let xLinearScale = xScale(healthData, chosenXAxis);
+    var xLinearScale = xScale(healthData, chosenXAxis);
 
     // Create y scale function
-    let yLinearScale = d3.scaleLinear()
+    var yLinearScale = d3.scaleLinear()
         .domain([0, d3.max(healthData, d => d.healthcare)])
         .range([height, 0]);
 
     // Create initial axis functions; generates the scaled axis
-    let bottomAxis = d3.axisBottom(xLinearScale);
-    let leftAxis = d3.axisLeft(yLinearScale);
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    var leftAxis = d3.axisLeft(yLinearScale);
 
-    // append x axis; adds x axis scatter data tick marks to scattergroup
+    // append x axis; adds x axis scatter data tick marks to chartGroup
     // for future axis value changes then the renderAxes() function needs called
-    let xAxis = scatterGroup.append("g")
+    var xAxis = chartGroup.append("g")
         .classed("x-axis", true)
         .attr("transform", `translate(0, ${height})`)
         .call(bottomAxis);
 
     // append y axis
-    let yAxis = scatterGroup.append("g")
+    var yAxis = chartGroup.append("g")
         .call(leftAxis);
 
     // New by Erin - provide data first to grouped elements 
     // case is important - selectAll() works but SelectAll() would produce a type error - the capitalizaton makes a difference
-    let circlesGroupAll = scatterGroup.selectAll("circlesGroup").data(healthData).enter();
+    var circlesGroupAll = chartGroup.selectAll("circlesGroup").data(healthData).enter();
 
     // modfied by Erin - data is already bound to circlesGroupAll and now I am adding the 'circles' with one circle for each data
     // note that the attributes are "cx" and "cy"; the data is being scaled by the scaling functions defined above; see it is a function
     // the centers of the circles are also coming from the specific x data group 'chosenXAxis'
     // append initial circles
-    let circlesGroup = circlesGroupAll
+    var circlesGroup = circlesGroupAll
         .append("circle")
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
-        .attr("cy", d => yLinearScale(d.healthcare))
+        .attr("cy", d => yLinearScale(d.healthData))
         .attr("r", 20)
         .attr("fill", "blue")
         .attr("opacity", ".5");
@@ -243,31 +243,31 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     // added by Erin - I wanted to add text to the circles - probably several ways of doing this but here is one.
     // data is bound to ciclesGroupAll like above and now I add a text element at "x" and "y", not the difference from above.
     // added round function to make the numbers in the cirlces have no decimals; this is a random data selection; I just wanted something inside the circles. If you want to see why these values are like they are then you need to back-calculate what xScale and transpose is doing
-    let textcirclesGroup = circlesGroupAll
+    var textcirclesGroup = circlesGroupAll
         .append("text")
         .text((d) => Math.round(xLinearScale(d[chosenXAxis])))
         .attr("x", d => xLinearScale(d[chosenXAxis]))
         .attr("y", d => yLinearScale(d.healthcare))
 
     // Create group for two x-axis labels
-    let labelsGroup = scatterGroup.append("g")
+    var labelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-    let povertyLength = labelsGroup.append("text")
+    var povertyLength = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 20)
         .attr("value", "poverty") // value to grab for event listener
         .classed("active", true)
         .text("In poverty");
 
-    let AgeLengthLabel = labelsGroup.append("text")
+    var AgeLengthLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 40)
         .attr("value", "age") // value to grab for event listener
         .classed("inactive", true)
         .text("Age (Median)");
 
-    let HouseholdIncomeLabel = labelsGroup.append("text")
+    var HouseholdIncomeLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 40)
         .attr("value", "income") // value to grab for event listener
@@ -276,16 +276,16 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
 
 
     // append y axis
-    scatterGroup.append("text")
+    chartGroup.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin.left)
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .classed("axis-text", true)
-        .text("Number of Billboard 500 Hits");
+        .text("Obese (%)");
 
     // updateToolTip function above csv import
-    let circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+    var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
 
 
@@ -300,7 +300,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     labelsGroup.selectAll("text")
         .on("click", function() {
             // get value of selection
-            let value = d3.select(this).attr("value");
+            var value = d3.select(this).attr("value");
             if (value !== chosenXAxis) {
 
                 // replaces chosenXAxis with value
