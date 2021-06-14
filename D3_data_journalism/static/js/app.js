@@ -237,7 +237,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d.obesity))
         .attr("r", 20)
-        .attr("fill", "lightblue")
+        .attr("fill", "blue")
         .attr("opacity", "1");
 
     // added by Erin - I wanted to add text to the circles - probably several ways of doing this but here is one.
@@ -254,26 +254,26 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     var labelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-    var PovertyLengthLabel = labelsGroup.append("text")
+    var povertyLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 20)
         .attr("value", "poverty") // value to grab for event listener
         .classed("active", true)
-        .text("In poverty");
+        .text("In poverty (%)");
 
-    var AgeLengthLabel = labelsGroup.append("text")
-        .attr("x", 0)
-        .attr("y", 40)
-        .attr("value", "age") // value to grab for event listener
-        .classed("inactive", true)
-        .text("Age (Median)");
-
-    var HouseholdIncomeLabel = labelsGroup.append("text")
+    var incomeLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 40)
         .attr("value", "income") // value to grab for event listener
         .classed("inactive", true)
         .text("Household Income (Median)");
+
+    var ageLabel = labelsGroup.append("text")
+        .attr("x", 0)
+        .attr("y", 40)
+        .attr("value", "age") // value to grab for event listener
+        .classed("inactive", true)
+        .text("Age (Median)");
 
 
     // append y axis
@@ -283,7 +283,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .classed("axis-text", true)
-        .text("Obese (%)");
+        .text("Obesity");
 
     // updateToolTip function above csv import
     var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
@@ -321,33 +321,33 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
 
                 // changes classes to change bold text
                 if (chosenXAxis === "poverty") {
-                    PovertyLengthLabel
+                    povertyLabel
                         .classed("active", true)
                         .classed("inactive", false);
-                    AgeLengthLabel
+                    incomeLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    HouseholdIncomeLabel
+                    ageLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 } else if (chosenXAxis === "age") {
-                    AgeLengthLabel
+                    povertyLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                    incomeLabel
+                        .classed("active", false)
+                        .classed("inactive", true);
+                    ageLabel
                         .classed("active", true)
                         .classed("inactive", false);
-                    PovertyLengthLabel
-                        .classed("active", false)
-                        .classed("inactive", true);
-                    HouseholdIncomeLabel
-                        .classed("active", false)
-                        .classed("inactive", true);
                 } else {
-                    HouseholdIncomeLabel
-                        .classed("active", true)
-                        .classed("inactive", false);
-                    AgeLengthLabel
+                    povertyLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    PovertyLengthLabel
+                    incomeLabel
+                        .classed("active", true)
+                        .classed("inactive", false);
+                    ageLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 }
