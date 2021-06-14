@@ -253,7 +253,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
     var labelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-    var povertyLength = labelsGroup.append("text")
+    var PovertyLengthLabel = labelsGroup.append("text")
         .attr("x", 0)
         .attr("y", 20)
         .attr("value", "poverty") // value to grab for event listener
@@ -286,10 +286,6 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
 
     // updateToolTip function above csv import
     var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
-
-
-
-
 
     // #################### 5.  ADD updates upon clicking axis text  ###############//
 
@@ -324,23 +320,23 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
 
                 // changes classes to change bold text
                 if (chosenXAxis === "poverty") {
-                    povertyLengthLabel
+                    PovertyLengthLabel
                         .classed("active", true)
                         .classed("inactive", false);
                     AgeLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    householdIncomeLabel
+                    HouseholdIncomeLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 } else if (chosenXAxis === "age") {
                     AgeLengthLabel
                         .classed("active", true)
                         .classed("inactive", false);
-                    povertyLengthLabel
+                    PovertyLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    householdIncomeLabel
+                    HouseholdIncomeLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 } else {
@@ -350,7 +346,7 @@ d3.csv("static/data/data.csv").then(function(healthData, err) {
                     AgeLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
-                    povertyLengthLabel
+                    PovertyLengthLabel
                         .classed("active", false)
                         .classed("inactive", true);
                 }
